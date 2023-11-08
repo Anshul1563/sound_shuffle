@@ -8,6 +8,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        'text': 'hsl(223, 89%, 7%)',
+        'background': 'hsl(13, 70%, 96%)',
+        'primary': 'hsl(43, 88%, 80%)',
+        'secondary': 'hsl(13, 88%, 90%)',
+        'accent': 'hsl(223, 65%, 47%)',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -16,5 +23,7 @@ const config: Config = {
     },
   },
   plugins: [],
+
+
 }
 export default config
