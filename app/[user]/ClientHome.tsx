@@ -5,6 +5,7 @@ import ModalContent from './ModalContent'
 
 function ClientHome({
     playlists,
+    user,
 }: {
     playlists: {
         name: string
@@ -12,16 +13,22 @@ function ClientHome({
         playtime: string
         user: string
     }[]
+    user: string
 }) {
     const [modalIsOpen, setIsOpen] = useState(-1)
+    const [addition, setAddition] = useState(false)
+    const [statePlaylists, setStatePlaylists] = useState(playlists)
+    const [playlistName, setPlaylistName] = useState('')
 
-    const playlistElements = playlists.map((playlist, ind) => {
+    console.log(statePlaylists)
+
+    const playlistElements = statePlaylists.map((playlist, ind) => {
         return (
             <>
                 {modalIsOpen != -1 &&
                     createPortal(
                         <ModalContent
-                            key={ind}
+                            key={ind + 25}
                             info={{
                                 name: playlist.name,
                             }}
@@ -54,11 +61,33 @@ function ClientHome({
         )
     })
 
+    function CreatePlaylist(name: string) {
+        console.log('Creating')
+
+        setStatePlaylists((prev) => {
+            const newPlaylist = {
+                name: name,
+                likes: 0,
+                playtime: '0',
+                user: user,
+            }
+
+            const playlists = JSON.parse(JSON.stringify(prev))
+
+            playlists.push(newPlaylist)
+
+            return playlists
+        })
+
+        setIsOpen(statePlaylists.length)
+        setAddition(false)
+    }
+
     return (
         <div className="flex h-screen flex-col gap-8 bg-background p-20 font-work">
             <p className="text-3xl font-semibold">
                 Welcome,{' '}
-                <span className="text-4xl text-accent">Anshul1563</span>
+                <span className="text-4xl text-accent">{user}</span>
             </p>
             <div className="flex w-fit flex-col gap-4 rounded-lg bg-secondary p-8">
                 <h1 className="text-2xl font-semibold ">
@@ -66,6 +95,36 @@ function ClientHome({
                 </h1>
                 <div className="flex flex-wrap gap-8">{playlistElements}</div>
             </div>
+            {addition ? (
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        CreatePlaylist(playlistName)
+                    }}
+                    className="flex w-fit cursor-pointer gap-4 rounded-md border-2 border-accent bg-white p-4 py-2 text-lg font-semibold"
+                >
+                    <input
+                        value={playlistName}
+                        onChange={(e) => setPlaylistName(e.target.value)}
+                        autoFocus
+                        placeholder="Enter a playlist name!"
+                        className=" outline-none"
+                    />
+                    <button
+                        className="shrink-0 rounded-full bg-secondary p-2 text-sm"
+                        type="submit"
+                    >
+                        GO!
+                    </button>
+                </form>
+            ) : (
+                <button
+                    onClick={() => setAddition(true)}
+                    className=" w-fit cursor-pointer rounded-md border-2 border-accent bg-white p-4 py-2 text-lg font-bold hover:bg-primary"
+                >
+                    Create a new Playlist!
+                </button>
+            )}
         </div>
     )
 }

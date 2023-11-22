@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Headphone from "@/public/images/headphone.svg";
 import { Metadata } from "next";
-import LoginForm from "@/logic/client_components/LoginForm";
+import LoginForm from "../logic/client_components/LoginForm";
 
 export const metadata: Metadata = {
 	title: "Sound Shuffle",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
 	return (
-		<div className=" bg-background h-screen flex">
+		<div className=" bg-background h-screen flex w-screen flex-row">
 			<div className="h-full w-[60%] bg-primary flex justify-center items-center flex-col gap-8">
 				<Image alt="headphone" src={Headphone} className="w-48 h-48" />
 				<h1 className=" font-bold text-3xl tracking-wider text-accent">

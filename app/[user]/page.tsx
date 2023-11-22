@@ -1,6 +1,11 @@
 import ClientHome from "./ClientHome"
 
-function Homepage() {
+function Homepage({ params }: {
+    params: {
+        user : string
+    }
+}) {
+
    const ar = [
        { name: 'Daily Mix 1', likes: 59, playtime: '3:55', user: 'Anshul153' },
        {
@@ -14,7 +19,7 @@ function Homepage() {
    ]
 
     return (
-        <ClientHome playlists={ar} />
+        <ClientHome playlists={ar} user={params.user} />
     )
 }
 

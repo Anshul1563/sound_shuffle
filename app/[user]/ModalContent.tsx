@@ -103,10 +103,10 @@ function ModalContent({
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex h-full cursor-default flex-col  gap-4 rounded-md border-4 border-white bg-secondary p-6"
+                className="flex h-full cursor-default flex-col  gap-4 rounded-md border-2 border-black bg-secondary p-6"
             >
                 <div className="mb-8 flex items-center justify-between">
-                    <div className="text-4xl font-bold text-accent">
+                    <div className="text-4xl font-bold text-accent align-baseline">
                         {info.name}
                     </div>
                     <button
