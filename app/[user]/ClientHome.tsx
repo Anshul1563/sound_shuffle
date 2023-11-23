@@ -26,6 +26,7 @@ function ClientHome({
     playlists,
     user,
     userID,
+    allTracks,
 }: {
     playlists: {
         id: string
@@ -40,10 +41,20 @@ function ClientHome({
             playtime: string
             url: string
             addedAt: Date
+            trackID: string
+            playlistID: string
         }[]
     }[]
     user: string
     userID: number
+    allTracks: {
+        name: string
+        artist: string
+        album: string
+        playtime: string
+        url: string
+        id : string
+    }[]
 }) {
     const [modalIsOpen, setIsOpen] = useState(-1)
     const [addition, setAddition] = useState(false)
@@ -66,6 +77,8 @@ function ClientHome({
                             ind={ind}
                             modalIsOpen={modalIsOpen}
                             tracks={playlist.tracks}
+                            allTracks={allTracks}
+                            playlistID = {playlist.id}
                         />,
                         document.body
                     )}
@@ -112,6 +125,8 @@ function ClientHome({
                     playtime: formatTime(Number(track.track.duration)),
                     url: track!.track!.url!,
                     addedAt: track!.addedAt!,
+                    trackID: track!.trackId,
+                    playlistID: track!.playlistId,
                 }
             })
 

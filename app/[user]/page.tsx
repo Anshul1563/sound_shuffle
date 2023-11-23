@@ -1,6 +1,6 @@
 import prisma from '@/prisma/prisma'
 import ClientHome from './ClientHome'
-import { GetUserInfo } from '@/logic/server_actions/Playlist'
+import { GetUserInfo, ShowAllSongs } from '@/logic/server_actions/Playlist'
 
 function formatTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000)
@@ -25,6 +25,21 @@ async function Homepage({
 }) {
     const user = await GetUserInfo(params.user)
 
+    const res = await ShowAllSongs()
+
+    const songs = res.data!
+
+    const allTracks = songs.map((track) => {
+        return {
+            name: track!.name!,
+            artist: track.artist!.name!,
+            album: track.album!.name!,
+            playtime: formatTime(Number(track.duration)),
+            url: track.url!,
+            id : track.id!
+        }
+    })
+
     if (!user) {
         return <div> No user found with that name</div>
     }
@@ -41,6 +56,8 @@ async function Homepage({
                 playtime: formatTime(Number(track.track.duration)),
                 url: track!.track!.url!,
                 addedAt: track!.addedAt!,
+                trackID: track!.trackId,
+                playlistID: track!.playlistId,
             }
         })
 
@@ -55,7 +72,12 @@ async function Homepage({
     })
 
     return (
-        <ClientHome playlists={playlists} user={user.name} userID={user.id} />
+        <ClientHome
+            allTracks={allTracks}
+            playlists={playlists}
+            user={user.name}
+            userID={user.id}
+        />
     )
 }
 
