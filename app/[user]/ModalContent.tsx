@@ -7,6 +7,8 @@ import {
     RemoveSongFromPlaylist,
 } from '@/logic/server_actions/Playlist'
 
+import { toast } from 'react-toastify'
+
 function ModalContent({
     onClose,
     info,
@@ -41,25 +43,78 @@ function ModalContent({
     playlistID: string
 }) {
     const [add, setAdd] = useState(false)
+    const [loading, setLoading] = useState('')
 
     const [playlistTracks, setPlaylistTracks] = useState(tracks)
 
     if (ind != modalIsOpen) return <></>
 
     async function AddTrack(trackID: string, playlistID: string) {
+        setLoading('add')
+
         const res = await AddSongToPlaylist(playlistID, trackID)
+
         if (res.status == 'failed') {
+            setLoading('')
+            toast.error("Song is already in the playlist", {
+                position: 'bottom-center',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light',
+            })
             return
         }
-        UpdatePlaylist()
+        await UpdatePlaylist()
+
+        setLoading('')
+        toast.success(res.message, {
+            position: 'bottom-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+        })
     }
 
     async function DeleteTrack(trackID: string, playlistID: string) {
+        setLoading('del')
+
         const res = await RemoveSongFromPlaylist(playlistID, trackID)
+
         if (res.status == 'failed') {
+            setLoading('')
+            toast.error(res.error, {
+                position: 'bottom-center',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light',
+            })
             return
         }
-        UpdatePlaylist()
+        await UpdatePlaylist()
+
+        setLoading('')
+        toast.error(res.message, {
+            position: 'bottom-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+        })
     }
 
     async function UpdatePlaylist() {
@@ -88,8 +143,11 @@ function ModalContent({
                     <div className="text-end">{track.playtime}</div>
                 </a>
                 <button
+                    disabled={loading == 'add'}
                     onClick={() => AddTrack(track.id, playlistID)}
-                    className="w-12 shrink-0 rounded-md bg-green-400 p-2"
+                    className={`w-12 shrink-0 rounded-md bg-green-400 p-2 ${
+                        loading == 'add' ? 'opacity-80' : ''
+                    }`}
                 >
                     Add
                 </button>
@@ -113,8 +171,11 @@ function ModalContent({
                     <div className="text-end">{track.playtime}</div>
                 </a>
                 <button
+                    disabled={loading == 'del'}
                     onClick={() => DeleteTrack(track.trackID, track.playlistID)}
-                    className="w-12 shrink-0 rounded-md bg-red-400 p-2"
+                    className={`w-12 shrink-0 rounded-md bg-red-400 p-2 ${
+                        loading == 'del' ? 'opacity-80' : ''
+                    }`}
                 >
                     Del
                 </button>

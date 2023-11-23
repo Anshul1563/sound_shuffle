@@ -42,7 +42,7 @@ export async function HashAndStore(details: {
             }
         })
 
-        return { status: "successful" }
+        return { status: "successful", message :"Succesfully Registered!" }
 
     } catch (e) {
         return { status: "failed", error: e }
@@ -76,7 +76,7 @@ export async function CheckUser(email: string, password: string) {
         if (!match) {
             throw "password is incorrect"
         } else {
-            return { status: "successful", name : userInfo.name }
+            return { status: "successful", name: userInfo.name,  message: "Success! Logging in..." }
         }
     } catch (e) {
         return { status: "failed", error: e }

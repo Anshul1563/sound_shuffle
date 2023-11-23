@@ -17,7 +17,7 @@ export async function CreatePlaylist(name: string, userID: number) {
 
         })
 
-        return { status: "successful" }
+        return { status: "successful", message: `Playlist ${res.name} created!` }
 
     } catch (e) {
         console.log(e)
@@ -68,7 +68,7 @@ export async function DeletePlaylistWithID(playlistID: string) {
 
         console.log(res)
 
-        return { status: "successful" }
+        return { status: "successful", message : `Playlist ${res.name} deleted!` }
 
     } catch (e) {
         console.log(e)
@@ -121,7 +121,7 @@ export async function AddSongToPlaylist(playlistID: string, trackID: string) {
             }
         })
 
-        return { status: "successful" }
+        return { status: "successful" , message : "Song has been added" }
 
     } catch (e) {
         console.log(e)
@@ -141,7 +141,7 @@ export async function RemoveSongFromPlaylist(playlistID: string, trackID: string
             }
         })
 
-        return { status: "successful" }
+        return { status: "successful", message : "Song has been deleted" }
 
     } catch (e) {
         console.log(e)

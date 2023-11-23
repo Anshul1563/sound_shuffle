@@ -3,15 +3,17 @@
 import { CheckUser, HashAndStore } from '@/logic/server_actions/Login'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 function LoginForm() {
     const [loginType, setLoginType] = useState('Login')
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
 
     async function HandleSubmit(e: any) {
         e.preventDefault()
+        setLoading(true)
         const form: HTMLFormElement = e.target
         const formData = new FormData(form)
         const formJson = Object.fromEntries(formData.entries())
@@ -23,13 +25,29 @@ function LoginForm() {
             const username = formJson.username.toString()
             const details = { username, email, plainPass }
             res = await HashAndStore(details)
-            console.log(res)
         } else {
             res = await CheckUser(email, plainPass)
-            console.log(res)
+            const name = res.name
             if (res.status == 'successful') {
-                router.push(`/${res.name}`)
+                setTimeout(() => {
+                    router.push(`/${name}`)
+                },2000)
             }
+        }
+
+        setLoading(false)
+
+        if (res.status == 'successful') {
+            toast.success(res.message, {
+                position: 'bottom-center',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light',
+            })
         }
 
         if (res.status == 'failed') {
@@ -47,7 +65,6 @@ function LoginForm() {
     }
     return (
         <div className="flex flex-grow flex-col items-start justify-start p-8 font-work">
-            <ToastContainer />
             <div className="flex w-fit flex-col items-center">
                 <form
                     method="post"
@@ -62,6 +79,7 @@ function LoginForm() {
                             Enter your email
                         </div>
                         <input
+                            disabled={loading}
                             name="email"
                             className="  rounded-sm border-2 border-slate-300 p-2"
                             placeholder="enter your email"
@@ -73,6 +91,7 @@ function LoginForm() {
                                 Enter your username
                             </div>
                             <input
+                                disabled={loading}
                                 name="username"
                                 className="  rounded-sm border-2 border-slate-300 p-2"
                                 placeholder="enter your username"
@@ -84,6 +103,7 @@ function LoginForm() {
                             Enter your password
                         </div>
                         <input
+                            disabled={loading}
                             name="password"
                             className=" w-full rounded-sm border-2 border-slate-300 p-2"
                             placeholder="enter your password"
@@ -93,8 +113,9 @@ function LoginForm() {
                     <button
                         className="w-full rounded-md bg-secondary p-3"
                         type="submit"
+                        disabled={loading}
                     >
-                        {loginType}
+                        {loading ? 'Loading!' : loginType}
                     </button>
                 </form>
                 {loginType == 'Login' ? (

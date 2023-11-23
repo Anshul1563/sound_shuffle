@@ -7,6 +7,7 @@ import {
     DeletePlaylistWithID,
     GetUserInfo,
 } from '@/logic/server_actions/Playlist'
+import { toast } from 'react-toastify'
 
 function formatTime(milliseconds: number) {
     const totalSeconds = Math.floor(milliseconds / 1000)
@@ -53,13 +54,14 @@ function ClientHome({
         album: string
         playtime: string
         url: string
-        id : string
+        id: string
     }[]
 }) {
     const [modalIsOpen, setIsOpen] = useState(-1)
     const [addition, setAddition] = useState(false)
     const [statePlaylists, setStatePlaylists] = useState(playlists)
     const [playlistName, setPlaylistName] = useState('')
+    const [loading, setLoading] = useState("")
 
     // console.log(statePlaylists)
 
@@ -78,7 +80,7 @@ function ClientHome({
                             modalIsOpen={modalIsOpen}
                             tracks={playlist.tracks}
                             allTracks={allTracks}
-                            playlistID = {playlist.id}
+                            playlistID={playlist.id}
                         />,
                         document.body
                     )}
@@ -100,12 +102,18 @@ function ClientHome({
                         <div className="text-sm">{playlist.likes} likes</div>
                     </div>
                 </button>
-                <button
-                    onClick={() => DeletePlaylist(playlist.id)}
-                    className="w-full border-2 border-t-0 border-white bg-red-400 p-1 text-center font-bold text-white transition-all hover:bg-white hover:text-red-500"
-                >
-                    DELETE
-                </button>
+                {loading == "del" ? (
+                    <div className="w-full border-2 border-t-0 border-white bg-red-400 p-1 text-center font-bold text-white text-opacity-80 transition-all">
+                        Deleting...
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => DeletePlaylist(playlist.id)}
+                        className="w-full border-2 border-t-0 border-white bg-red-400 p-1 text-center font-bold text-white transition-all hover:bg-white hover:text-red-500"
+                    >
+                        DELETE
+                    </button>
+                )}
             </div>
         )
     })
@@ -147,17 +155,32 @@ function ClientHome({
     }
 
     async function DeletePlaylist(id: string) {
+        setLoading("del")
+
         const res = await DeletePlaylistWithID(id)
 
         if (res.status == 'failed') {
             return
         }
 
-        UpdatePlaylists()
+        await UpdatePlaylists()
+
+        toast.error(res.message, {
+            position: 'bottom-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+        })
+
+        setLoading("")
     }
 
     async function AddPlaylist(name: string) {
-        console.log('Creating')
+        setLoading("add")
 
         const res = await CreatePlaylist(name, userID)
 
@@ -165,7 +188,20 @@ function ClientHome({
             return
         }
 
-        UpdatePlaylists()
+        await UpdatePlaylists()
+
+        toast.success(res.message, {
+            position: 'bottom-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+        })
+
+        setLoading("")
     }
 
     return (
@@ -175,31 +211,56 @@ function ClientHome({
             </p>
             <div className="flex w-fit flex-col gap-4 rounded-lg bg-secondary p-8">
                 <h1 className="text-2xl font-semibold ">
-                    Here are your playlists
+                    {statePlaylists.length > 0
+                        ? 'Here are your playlists!'
+                        : 'You have no playlists!'}
                 </h1>
-                <div className="flex flex-wrap gap-8">{playlistElements}</div>
+                {statePlaylists.length > 0 && (
+                    <div className="flex flex-wrap gap-8 min-w-[800px]">
+                        {playlistElements}
+                    </div>
+                )}
             </div>
             {addition ? (
                 <form
                     onSubmit={(e) => {
                         e.preventDefault()
+                        setPlaylistName('')
                         AddPlaylist(playlistName)
                     }}
                     className="flex w-fit cursor-pointer gap-4 rounded-md border-2 border-accent bg-white p-4 py-2 text-lg font-semibold"
                 >
-                    <input
-                        value={playlistName}
-                        onChange={(e) => setPlaylistName(e.target.value)}
-                        autoFocus
-                        placeholder="Enter a playlist name!"
-                        className=" outline-none"
-                    />
-                    <button
-                        className="shrink-0 rounded-full bg-secondary p-2 text-sm"
-                        type="submit"
-                    >
-                        GO!
-                    </button>
+                    {loading == "add" ? (
+                        <div className=" opacity-80">Creating...</div>
+                    ) : (
+                        <>
+                            <input
+                                value={playlistName}
+                                onChange={(e) =>
+                                    setPlaylistName(e.target.value)
+                                }
+                                autoFocus
+                                placeholder="Enter a playlist name!"
+                                className=" outline-none"
+                            />
+                            <button
+                                className="shrink-0 rounded-md bg-secondary p-2 text-sm font-bold"
+                                type="submit"
+                            >
+                                GO!
+                            </button>
+                            <button
+                                className="shrink-0 rounded-md bg-red-400 p-2 text-sm font-bold text-white"
+                                type="reset"
+                                onClick={() => {
+                                    setPlaylistName('')
+                                    setAddition(false)
+                                }}
+                            >
+                                CANCEL
+                            </button>
+                        </>
+                    )}
                 </form>
             ) : (
                 <button
