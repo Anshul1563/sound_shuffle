@@ -2,87 +2,38 @@ import React from 'react'
 import Close from '@/public/images/close.svg'
 import Image from 'next/image'
 
+
 function ModalContent({
     onClose,
     info,
     ind,
     modalIsOpen,
+    tracks,
 }: {
     onClose: any
     info: any
     ind: Number
     modalIsOpen: Number
+    tracks: {
+        name: string
+        artist: string
+        album: string
+        playtime: string
+        url: string
+        addedAt: Date
+    }[]
 }) {
     console.log(info.name)
 
     if (ind != modalIsOpen) return <></>
 
-    const playlistTracks = [
-        {
-            name: 'Final Masquerade',
-            artist: 'Linkin Park',
-            album: 'The Hunting Party',
-            playtime: '3:59',
-        },
-        {
-            name: 'Bohemian Rhapsody',
-            artist: 'Queen',
-            album: 'A Night at the Opera',
-            playtime: '5:55',
-        },
-        {
-            name: 'Imagine',
-            artist: 'John Lennon',
-            album: 'Imagine',
-            playtime: '3:03',
-        },
-        {
-            name: 'Thriller',
-            artist: 'Michael Jackson',
-            album: 'Thriller',
-            playtime: '5:57',
-        },
-        {
-            name: 'Hotel California',
-            artist: 'Eagles',
-            album: 'Hotel California',
-            playtime: '6:30',
-        },
-        {
-            name: 'Billie Jean',
-            artist: 'Michael Jackson',
-            album: 'Thriller',
-            playtime: '4:54',
-        },
-        {
-            name: 'Stairway to Heaven',
-            artist: 'Led Zeppelin',
-            album: 'Led Zeppelin IV',
-            playtime: '8:02',
-        },
-        {
-            name: 'Boogie Wonderland',
-            artist: 'Earth, Wind & Fire',
-            album: 'I Am',
-            playtime: '4:48',
-        },
-        {
-            name: 'Hey Jude',
-            artist: 'The Beatles',
-            album: 'The Beatles',
-            playtime: '7:11',
-        },
-        {
-            name: "Sweet Child o' Mine",
-            artist: "Guns N' Roses",
-            album: 'Appetite for Destruction',
-            playtime: '5:56',
-        },
-    ]
+    const playlistTracks = tracks
 
     const trackElements = playlistTracks.map((track, ind) => {
         return (
-            <div
+            <a
+                href={track.url}
+                target="_blank"
                 key={ind}
                 className="grid w-full grid-cols-3 items-center justify-between p-3  transition-all duration-[15ms] hover:bg-white"
             >
@@ -92,7 +43,7 @@ function ModalContent({
                 </div>
                 <div className=" ml-20 text-start">{track.album}</div>
                 <div className="text-end">{track.playtime}</div>
-            </div>
+            </a>
         )
     })
 
@@ -106,7 +57,7 @@ function ModalContent({
                 className="flex h-full cursor-default flex-col  gap-4 rounded-md border-2 border-black bg-secondary p-6"
             >
                 <div className="mb-8 flex items-center justify-between">
-                    <div className="text-4xl font-bold text-accent align-baseline">
+                    <div className="align-baseline text-4xl font-bold text-accent">
                         {info.name}
                     </div>
                     <button

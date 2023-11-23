@@ -1,8 +1,6 @@
 "use server"
 import bcrypt from "bcrypt"
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from "@/prisma/prisma";
 
 export async function HashAndStore(details: {
     username: string;
@@ -64,7 +62,8 @@ export async function CheckUser(email: string, password: string) {
                 email: email
             },
             select: {
-                passwordHash: true
+                passwordHash: true,
+                name : true
             }
         })
 
@@ -77,7 +76,7 @@ export async function CheckUser(email: string, password: string) {
         if (!match) {
             throw "password is incorrect"
         } else {
-            return { status: "successful" }
+            return { status: "successful", name : userInfo.name }
         }
     } catch (e) {
         return { status: "failed", error: e }

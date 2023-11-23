@@ -28,7 +28,7 @@ function LoginForm() {
             res = await CheckUser(email, plainPass)
             console.log(res)
             if (res.status == 'successful') {
-                router.push('/home')
+                router.push(`/${res.name}`)
             }
         }
 
@@ -48,7 +48,7 @@ function LoginForm() {
     return (
         <div className="flex flex-grow flex-col items-start justify-start p-8 font-work">
             <ToastContainer />
-            <div className='w-fit flex flex-col items-center'>
+            <div className="flex w-fit flex-col items-center">
                 <form
                     method="post"
                     onSubmit={HandleSubmit}
